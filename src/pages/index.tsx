@@ -1,11 +1,25 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import RandomFox from '@/components/RandomFox';
+import { MouseEventHandler, useState } from 'react';
 
 const random = (): number => Math.floor(Math.random() * 123) + 1;
+const generateID =  (): string => Math.random().toString(36).substring(2,9)
+
+type ImageItem = { id:string, image:string }
 
 const Home: NextPage = (): JSX.Element => {
-  const image = `https://randomfox.ca/images/${random()}.jpg`;
+  const [images, setImages] = useState<ImageItem[]>([])
+
+  const addNewFox: MouseEventHandler<HTMLButtonElement> = (event) : void => {
+    const image = `https://randomfox.ca/images/${random()}.jpg`;
+    const newImageItem: ImageItem = {
+      id: generateID(),
+      image
+    }
+    setImages([...images, newImageItem]);
+  };
+  
   return (
     <div>
       <Head>
@@ -16,7 +30,12 @@ const Home: NextPage = (): JSX.Element => {
 
       <main>
         <h1 className="text-3xl font-bold underline">Hello world!</h1>
-        <RandomFox image={image}/>
+        <button onClick={addNewFox}>add new fox</button>
+        {images.map(({image, id}) => (
+          <div className="p-4" key={id}>
+            <RandomFox image={image} />
+          </div>
+        ))}
       </main>
 
       <footer></footer>
