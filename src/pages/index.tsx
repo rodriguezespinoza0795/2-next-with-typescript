@@ -1,23 +1,31 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import RandomFox from '@/components/RandomFox';
+import { LazyImage } from '@/components';
 import { MouseEventHandler, useState } from 'react';
 
-const random = (): number => Math.floor(Math.random() * 123) + 1;
-const generateID =  (): string => Math.random().toString(36).substring(2,9)
+// generate simple unique id
+const generateId = (): string => {
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
+};
 
-type ImageItem = { id:string, image:string }
+// random number from 1 to 122
+const random = () => Math.floor(Math.random() * 122) + 1;
+
+type ImageItem = {
+  id: string;
+  url: string;
+};
 
 const Home: NextPage = (): JSX.Element => {
   const [images, setImages] = useState<ImageItem[]>([])
 
-  const addNewFox: MouseEventHandler<HTMLButtonElement> = (event) : void => {
-    const image = `https://randomfox.ca/images/${random()}.jpg`;
-    const newImageItem: ImageItem = {
-      id: generateID(),
-      image
-    }
-    setImages([...images, newImageItem]);
+  const addNewFox: MouseEventHandler<HTMLButtonElement> = () => {
+    const id = generateId();
+    const url = `https://randomfox.ca/images/${random()}.jpg`;
+    setImages([...images, { id, url }]);
   };
   
   return (
@@ -29,11 +37,25 @@ const Home: NextPage = (): JSX.Element => {
       </Head>
 
       <main>
-        <h1 className="text-3xl font-bold underline">Hello world!</h1>
-        <button onClick={addNewFox}>add new fox</button>
-        {images.map(({image, id}) => (
+        <div className="m-4">
+          <button
+            onClick={addNewFox}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+          >
+            Add new fox
+          </button>
+        </div>
+        {images.map(({ id, url }) => (
           <div className="p-4" key={id}>
-            <RandomFox image={image} />
+            <LazyImage
+              src={url}
+              width="320"
+              height="auto"
+              className="mx-auto rounded-md bg-gray-300"
+              onClick={() => {
+                console.log("holi!");
+              }}
+            />
           </div>
         ))}
       </main>
